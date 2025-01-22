@@ -25,6 +25,24 @@ app.post("/auth", async (req, res) => {
     }
 })
 
+// Création d'une tâche
+app.post("/task", async (req, res) => {
+    const { title, description, userId } = req.body;
+    if (!title || !userId) {
+        return res.status(400).json({ error: "Title and userId are required" });
+    }
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        const task = await Task.create({ title, description, userId });
+        res.status(201).json(task);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 // Récupération de toutes les tâches
 app.get("/tasks", async (req, res) => {
     try {

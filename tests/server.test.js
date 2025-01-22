@@ -31,6 +31,23 @@ app.get("/tasks", async (req, res) => {
     }
 });
 
+app.post("/task", async (req, res) => {
+    const { title, description, userId } = req.body;
+    if (!title || !userId) {
+        return res.status(400).json({ error: "Title and userId are required" });
+    }
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        const task = await Task.create({ title, description, userId });
+        res.status(201).json(task);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 app.get("/task/:id", async (req, res) => {
     const { id } = req.params;
     try {
@@ -62,6 +79,17 @@ describe("API Routes", () => {
         expect(response.statusCode).toBe(201);
         expect(response.body).toHaveProperty("email", "test@example.com");
         expect(response.body).toHaveProperty("id");
+    });
+
+    // test de création d'une nouvelle tâche
+    test("POST /task - create a new task", async () => {
+        const user = await User.create({ email: "testtask@example.com", password: "password123" });
+        const response = await request(app)
+            .post("/task")
+            .send({ title: "Test Create Task", userId: user.id });
+        expect(response.statusCode).toBe(201);
+        expect(response.body).toHaveProperty("userId", user.id);
+        expect(response.body).toHaveProperty("title", "Test Create Task");
     });
 
     // test de récupération de toutes les tâches
