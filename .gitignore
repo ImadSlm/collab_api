@@ -42,3 +42,5 @@ coverage/
 
 # VSCode
 .vscode/
+
+z_tunnel_ssh_cmd.txt

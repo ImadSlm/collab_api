@@ -12,7 +12,7 @@ const Task = sequelize.define("Task", {
         allowNull: true,
     },
     userId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         references: {
             model: User,
             key: "id",

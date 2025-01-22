@@ -56,6 +56,7 @@ describe("API Routes", () => {
             .send({ email: "test@example.com", password: "password123" });
         expect(response.statusCode).toBe(201);
         expect(response.body).toHaveProperty("email", "test@example.com");
+        expect(response.body).toHaveProperty("id");
     });
 
     test("GET /tasks - get all tasks", async () => {
@@ -65,7 +66,8 @@ describe("API Routes", () => {
     });
 
     test("GET /task/:id - get task by id", async () => {
-        const task = await Task.create({ title: "Test Task", description: "Test Description" });
+        const user = await User.create({ email: "testuser@example.com", password: "password123" });
+        const task = await Task.create({ title: "Test Task", description: "Test Description", userId: user.id });
         const response = await request(app).get(`/task/${task.id}`);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("title", "Test Task");

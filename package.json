@@ -18,7 +18,8 @@
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.4.0",
     "mongoose": "^8.8.4",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "jest": "^29.7.0",
