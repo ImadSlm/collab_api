@@ -86,6 +86,7 @@ describe("API Routes", () => {
         await sequelize.close();
     });
 
+
     // TESTS UNITAIRES //
 
     // test de création d'un nouvel utilisateur
@@ -168,4 +169,28 @@ describe("API Routes", () => {
         const user = await User.findOne({ where: { email: "secure@example.com" } });
         expect(user.password).not.toBe("password123");
     });
+
+
+    // TESTS FONCTIONNELS //
+
+    // test("PUT /task/:id - update a task", async () => {
+    //     const user = await User.create({ email: "updateuser@example.com", password: "password123" });
+    //     const task = await Task.create({ title: "Old Task", description: "Old Description", userId: user.id });
+    //     const response = await request(app)
+    //         .put(`/task/${task.id}`)
+    //         .send({ title: "Updated Task", description: "Updated Description" });
+    //     expect(response.statusCode).toBe(200);
+    //     expect(response.body).toHaveProperty("title", "Updated Task");
+    //     expect(response.body).toHaveProperty("description", "Updated Description");
+    // });
+
+    // // test de suppression d'une tâche
+    // test("DELETE /task/:id - delete a task", async () => {
+    //     const user = await User.create({ email: "deleteuser@example.com", password: "password123" });
+    //     const task = await Task.create({ title: "Task to Delete", description: "Description", userId: user.id });
+    //     const response = await request(app).delete(`/task/${task.id}`);
+    //     expect(response.statusCode).toBe(204);
+    //     const deletedTask = await Task.findByPk(task.id);
+    //     expect(deletedTask).toBeNull();
+    // });
 });
