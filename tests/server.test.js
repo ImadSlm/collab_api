@@ -62,6 +62,10 @@ app.get("/task/:id", async (req, res) => {
     }
 });
 
+async function findUserByEmail(email) {
+    return await User.findOne({ where: { email } });
+}
+
 describe("API Routes", () => {
     beforeAll(async () => {
         await sequelize.sync({ force: true });
@@ -71,6 +75,8 @@ describe("API Routes", () => {
         await sequelize.close();
     });
 
+    // TESTS UNITAIRES //
+
     // test de création d'un nouvel utilisateur
     test("POST /auth - create a new user", async () => {
         const response = await request(app)
@@ -79,6 +85,16 @@ describe("API Routes", () => {
         expect(response.statusCode).toBe(201);
         expect(response.body).toHaveProperty("email", "test@example.com");
         expect(response.body).toHaveProperty("id");
+    });
+
+    //test de connexion d'un utilisateur
+    test("POST /auth - login user", async () => {
+        const user = User.findOne({ where: { email: "test@example.com" } });
+        const response = await request(app)
+            .post("/auth")
+            .send({ email: user.email, password: "password123" });
+        expect(response.statusCode).toBe(201);
+        expect(response.body).toHaveProperty("email", user.email);
     });
 
     // test de création d'une nouvelle tâche
@@ -107,6 +123,9 @@ describe("API Routes", () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("title", "Test Task");
     });
+
+
+    // TEST SECURITAIRES //
 
     // test d'injection SQL
     test("POST /auth - prevent SQL injection", async () => {

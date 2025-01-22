@@ -4,44 +4,67 @@ const bodyParser = require("body-parser")
 const sequelize = require("./config/database")
 const User = require("./models/user")
 const Task = require("./models/task")
-const validator = require("validator");
+const validator = require("validator")
 const bcrypt = require("bcrypt")
 
 const app = express()
 app.use(bodyParser.json())
 const port = 3000
 
-// Création d'un utilisateur
+// Fonction pour vérifier le mot de passe de l'utilisateur
+async function verifyPassword(user, password) {
+    return await bcrypt.compare(password, user.password)
+}
+
+async function findUserByEmail(email) {
+    return await User.findOne({ where: { email } });
+}
+
+
+// Création et authentification d'un utilisateur
 app.post("/auth", async (req, res) => {
     const { email, password } = req.body
     if (!validator.isEmail(email) || !validator.isLength(password, { min: 6 })) {
         return res.status(400).json({ error: "Invalid input" });
     }
     try {
-        const user = await User.create({ email, password })
+        let user = await User.findOne({ where: { email } })
+        if (user) {
+            const isPasswordValid = verifyPassword(user, password)
+            if (!isPasswordValid) {
+                return res.status(401).json({ error: "Invalid password" })
+            }
+        } else {
+            user = await User.create({ email, password })
+        }
         res.status(201).json(user)
     } catch (error) {
         res.status(400).json({ error : error.message })
     }
 })
 
+
 // Création d'une tâche
 app.post("/task", async (req, res) => {
-    const { title, description, userId } = req.body;
-    if (!title || !userId) {
-        return res.status(400).json({ error: "Title and userId are required" });
+    const { title, description, email, password } = req.body
+    if (!title || !email || !password) {
+        return res.status(400).json({ error: "Title, email, and password are required" })
     }
     try {
-        const user = await User.findByPk(userId);
+        const user = await User.findOne({ where: { email } })
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ error: "User not found" })
         }
-        const task = await Task.create({ title, description, userId });
+        const isPasswordValid = await verifyPassword(user, password)
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid password" })
+        }
+        const task = await Task.create({ title, description, userId: user.id })
         res.status(201).json(task);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error: error.message })
     }
-});
+})
 
 // Récupération de toutes les tâches
 app.get("/tasks", async (req, res) => {
