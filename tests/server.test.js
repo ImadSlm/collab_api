@@ -4,12 +4,16 @@ const bodyParser = require("body-parser");
 const sequelize = require("../config/database");
 const User = require("../models/user");
 const Task = require("../models/task");
+const validator = require("validator");
 const app = express();
 
 app.use(bodyParser.json());
 
 app.post("/auth", async (req, res) => {
     const { email, password } = req.body;
+    if (!validator.isEmail(email) || !validator.isLength(password, { min: 6 })) {
+        return res.status(400).json({ error: "Invalid input" });
+    }
     try {
         const user = await User.create({ email, password });
         res.status(201).json(user);
@@ -50,6 +54,7 @@ describe("API Routes", () => {
         await sequelize.close();
     });
 
+    // test de création d'un nouvel utilisateur
     test("POST /auth - create a new user", async () => {
         const response = await request(app)
             .post("/auth")
@@ -59,12 +64,14 @@ describe("API Routes", () => {
         expect(response.body).toHaveProperty("id");
     });
 
+    // test de récupération de toutes les tâches
     test("GET /tasks - get all tasks", async () => {
         const response = await request(app).get("/tasks");
         expect(response.statusCode).toBe(200);
         expect(Array.isArray(response.body)).toBe(true);
     });
 
+    // test de récupération d'une tâche par son identifiant
     test("GET /task/:id - get task by id", async () => {
         const user = await User.create({ email: "testuser@example.com", password: "password123" });
         const task = await Task.create({ title: "Test Task", description: "Test Description", userId: user.id });
@@ -72,4 +79,32 @@ describe("API Routes", () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("title", "Test Task");
     });
+
+    // test d'injection SQL
+    test("POST /auth - prevent SQL injection", async () => {
+        const response = await request(app)
+            .post("/auth")
+            .send({ email: "' OR 1=1; --", password: "password123" });
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toHaveProperty("error");
+    });
+
+    //// Test de XSS
+    // test("POST /auth - prevent XSS", async () => {
+    //     const response = await request(app)
+    //         .post("/auth")
+    //         .send({ email: "<script>alert('XSS')</script>", password: "password123" });
+    //     expect(response.statusCode).toBe(400);
+    //     expect(response.body).toHaveProperty("errors");
+    // });
+
+    //// Test d'hachage mdp
+    // test("POST /auth - password should be hashed", async () => {
+    //     const response = await request(app)
+    //         .post("/auth")
+    //         .send({ email: "secure@example.com", password: "password123" });
+    //     expect(response.statusCode).toBe(201);
+    //     const user = await User.findOne({ where: { email: "secure@example.com" } });
+    //     expect(user.password).not.toBe("password123");
+    // });
 });

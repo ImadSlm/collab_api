@@ -10,8 +10,12 @@ const app = express()
 app.use(bodyParser.json())
 const port = 3000
 
+// Création d'un utilisateur
 app.post("/auth", async (req, res) => {
     const { email, password } = req.body
+    if (!validator.isEmail(email) || !validator.isLength(password, { min: 6 })) {
+        return res.status(400).json({ error: "Invalid input" });
+    }
     try {
         const user = await User.create({ email, password })
         res.status(201).json(user)
@@ -20,6 +24,7 @@ app.post("/auth", async (req, res) => {
     }
 })
 
+// Récupération de toutes les tâches
 app.get("/tasks", async (req, res) => {
     try {
         const tasks = await Task.findAll()
@@ -29,6 +34,7 @@ app.get("/tasks", async (req, res) => {
     }
 })
 
+// Récupération d'une tâche à partir de son identifiant
 app.get("/task/:id", async (req, res) => {
     const { id } = req.params
     try {

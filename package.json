@@ -19,7 +19,8 @@
     "mariadb": "^3.4.0",
     "mongoose": "^8.8.4",
     "sequelize": "^6.37.5",
-    "uuid": "^11.0.5"
+    "uuid": "^11.0.5",
+    "validator": "^13.12.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
