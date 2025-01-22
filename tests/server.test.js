@@ -5,22 +5,35 @@ const sequelize = require("../config/database");
 const User = require("../models/user");
 const Task = require("../models/task");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 const app = express();
 
 app.use(bodyParser.json());
 
+async function verifyPassword(user, password) {
+    return await bcrypt.compare(password, user.password)
+}
+
 app.post("/auth", async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body
     if (!validator.isEmail(email) || !validator.isLength(password, { min: 6 })) {
         return res.status(400).json({ error: "Invalid input" });
     }
     try {
-        const user = await User.create({ email, password });
-        res.status(201).json(user);
+        let user = await User.findOne({ where: { email } })
+        if (user) {
+            const isPasswordValid = await verifyPassword(user, password)
+            if (!isPasswordValid) {
+                return res.status(401).json({ error: "Invalid password" })
+            }
+        } else {
+            user = await User.create({ email, password })
+        }
+        res.status(201).json(user)
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error : error.message })
     }
-});
+})
 
 app.get("/tasks", async (req, res) => {
     try {
@@ -62,9 +75,7 @@ app.get("/task/:id", async (req, res) => {
     }
 });
 
-async function findUserByEmail(email) {
-    return await User.findOne({ where: { email } });
-}
+
 
 describe("API Routes", () => {
     beforeAll(async () => {
@@ -89,10 +100,13 @@ describe("API Routes", () => {
 
     //test de connexion d'un utilisateur
     test("POST /auth - login user", async () => {
-        const user = User.findOne({ where: { email: "test@example.com" } });
+        const user = await User.findOne({ where: { email: "test@example.com" } });
+        expect(user).not.toBeNull();
+    
         const response = await request(app)
             .post("/auth")
-            .send({ email: user.email, password: "password123" });
+            .send({ email: "test@example.com", password: "password123" });
+            
         expect(response.statusCode).toBe(201);
         expect(response.body).toHaveProperty("email", user.email);
     });

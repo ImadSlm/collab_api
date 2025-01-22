@@ -30,7 +30,7 @@ app.post("/auth", async (req, res) => {
     try {
         let user = await User.findOne({ where: { email } })
         if (user) {
-            const isPasswordValid = verifyPassword(user, password)
+            const isPasswordValid = await verifyPassword(user, password)
             if (!isPasswordValid) {
                 return res.status(401).json({ error: "Invalid password" })
             }
