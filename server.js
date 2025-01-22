@@ -4,6 +4,7 @@ const bodyParser = require("body-parser")
 const sequelize = require("./config/database")
 const User = require("./models/user")
 const Task = require("./models/task")
+const validator = require("validator");
 const bcrypt = require("bcrypt")
 
 const app = express()
