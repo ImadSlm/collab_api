@@ -89,22 +89,22 @@ describe("API Routes", () => {
         expect(response.body).toHaveProperty("error");
     });
 
-    //// Test de XSS
-    // test("POST /auth - prevent XSS", async () => {
-    //     const response = await request(app)
-    //         .post("/auth")
-    //         .send({ email: "<script>alert('XSS')</script>", password: "password123" });
-    //     expect(response.statusCode).toBe(400);
-    //     expect(response.body).toHaveProperty("errors");
-    // });
+    // Test de XSS
+    test("POST /auth - prevent XSS", async () => {
+        const response = await request(app)
+            .post("/auth")
+            .send({ email: "<script>alert('XSS')</script>", password: "password123" });
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toHaveProperty("error");
+    });
 
-    //// Test d'hachage mdp
-    // test("POST /auth - password should be hashed", async () => {
-    //     const response = await request(app)
-    //         .post("/auth")
-    //         .send({ email: "secure@example.com", password: "password123" });
-    //     expect(response.statusCode).toBe(201);
-    //     const user = await User.findOne({ where: { email: "secure@example.com" } });
-    //     expect(user.password).not.toBe("password123");
-    // });
+    // Test d'hachage mdp
+    test("POST /auth - password should be hashed", async () => {
+        const response = await request(app)
+            .post("/auth")
+            .send({ email: "secure@example.com", password: "password123" });
+        expect(response.statusCode).toBe(201);
+        const user = await User.findOne({ where: { email: "secure@example.com" } });
+        expect(user.password).not.toBe("password123");
+    });
 });
