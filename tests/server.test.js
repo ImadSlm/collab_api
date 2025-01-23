@@ -6,6 +6,7 @@ const User = require("../models/user");
 const Task = require("../models/task");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const rateLimit = require("express-rate-limit");
 const app = express();
 
 app.use(bodyParser.json());
@@ -14,7 +15,16 @@ async function verifyPassword(user, password) {
     return await bcrypt.compare(password, user.password)
 }
 
-app.post("/auth", async (req, res) => {
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limite chaque IP à 5 requêtes par fenêtre de 15 minutes
+    message: { error: "Too many failed login attempts, please try again later" }
+});
+
+console.log("loginLimiter", loginLimiter);
+
+app.post("/auth", loginLimiter, async (req, res) => {
     const { email, password } = req.body
     if (!validator.isEmail(email) || !validator.isLength(password, { min: 6 })) {
         return res.status(400).json({ error: "Invalid input" });
@@ -84,6 +94,11 @@ describe("API Routes", () => {
 
     afterAll(async () => {
         await sequelize.close();
+    });
+
+    beforeEach(() => {
+        // Réinitialiser le stockage du middleware rate-limit
+        loginLimiter.resetKey("::ffff:127.0.0.1");
     });
 
 
@@ -168,6 +183,23 @@ describe("API Routes", () => {
         expect(response.statusCode).toBe(201);
         const user = await User.findOne({ where: { email: "secure@example.com" } });
         expect(user.password).not.toBe("password123");
+    });
+
+    // Test de protection contre les attaques par force brute
+    test("POST /auth - prevent brute force attacks", async () => {
+        for (let i = 0; i < 6; i++) {
+            const response = await request(app)
+                .post("/auth")
+                .send({ email: "secure@example.com", password: "wrongpassword" });
+            console.log(response);
+            if (i < 5) {
+                expect(response.statusCode).toBe(401);
+                expect(response.body).toHaveProperty("error", "Invalid password");
+            } else {
+                expect(response.statusCode).toBe(429);
+                expect(response.body).toHaveProperty("error", "Too many failed login attempts, please try again later");
+            }
+        }
     });
 
 
