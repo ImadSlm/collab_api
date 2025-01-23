@@ -19,6 +19,13 @@ const Task = sequelize.define("Task", {
             key: "id",
         },
     },
+    // userId: {
+    //     type: DataTypes.INTEGER,
+    //     references: {
+    //         model: User,
+    //         key: "id",
+    //     },
+    // },
 })
 
 module.exports = Task

@@ -12,6 +12,9 @@ const app = express()
 app.use(bodyParser.json())
 const port = 3000
 
+// User.hasMany(Task, { foreignKey: 'userId' });
+// Task.belongsTo(User, { foreignKey: 'userId' });
+
 // Fonction pour vérifier le mot de passe de l'utilisateur
 async function verifyPassword(user, password) {
     return await bcrypt.compare(password, user.password)

@@ -11,6 +11,11 @@ const User = sequelize.define("User", {
         defaultValue: uuidv4,
         // allowNull: false,
     },
+    // id: {
+    //     type: DataTypes.INTEGER,
+    //     primaryKey: true,
+    //     autoIncrement: true,
+    // },
     email: {
         type: DataTypes.STRING,
         allowNull: false,

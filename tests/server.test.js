@@ -279,7 +279,6 @@ describe("API Routes", () => {
             const response = await request(app)
                 .post("/auth")
                 .send({ email: "secure@example.com", password: "wrongpassword" });
-            console.log(response);
             if (i < 5) {
                 expect(response.statusCode).toBe(401);
                 expect(response.body).toHaveProperty("error", "Invalid password");
