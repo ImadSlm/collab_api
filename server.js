@@ -5,6 +5,7 @@ const sequelize = require("./config/database")
 const User = require("./models/user")
 const Task = require("./models/task")
 const validator = require("validator")
+const rateLimit = require("express-rate-limit");
 const bcrypt = require("bcrypt")
 
 const app = express()
@@ -16,13 +17,15 @@ async function verifyPassword(user, password) {
     return await bcrypt.compare(password, user.password)
 }
 
-async function findUserByEmail(email) {
-    return await User.findOne({ where: { email } });
-}
-
+// Configuration du middleware limiteur de connexion
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limite chaque IP à 5 requêtes par fenêtre de 15 minutes
+    message: { error: "Too many failed login attempts, please try again later" }
+});
 
 // Création et authentification d'un utilisateur
-app.post("/auth", async (req, res) => {
+app.post("/auth", loginLimiter, async (req, res) => {
     const { email, password } = req.body
     if (!validator.isEmail(email) || !validator.isLength(password, { min: 6 })) {
         return res.status(400).json({ error: "Invalid input" });

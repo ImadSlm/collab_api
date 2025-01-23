@@ -22,8 +22,6 @@ const loginLimiter = rateLimit({
     message: { error: "Too many failed login attempts, please try again later" }
 });
 
-console.log("loginLimiter", loginLimiter);
-
 app.post("/auth", loginLimiter, async (req, res) => {
     const { email, password } = req.body
     if (!validator.isEmail(email) || !validator.isLength(password, { min: 6 })) {
