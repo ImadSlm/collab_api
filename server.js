@@ -94,6 +94,62 @@ app.get("/task/:id", async (req, res) => {
     }
 })
 
+// Modification d'une tâche
+app.put("/task/:id", async (req, res) => {
+    const { id } = req.params
+    const { title, description, email, password } = req.body
+    if (!title || !email || !password) {
+        return res.status(400).json({ error: "Title, email, and password are required" })
+    }
+    try {
+        const user = await User.findOne({ where: { email } })
+        if (!user) {
+            return res.status(404).json({ error: "User not found" })
+        }
+        const isPasswordValid = await verifyPassword(user, password)
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid password" })
+        }
+        const task = await Task.findByPk(id)
+        if (!task) {
+            return res.status(404).json({ error: "Task not found" })
+        }
+        task.title = title
+        task.description = description
+        await task.save()
+        res.status(200).json(task)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+})
+
+// Suppression d'une tâche
+app.delete("/task/:id", async (req, res) => {
+    const { id } = req.params
+    const { email, password } = req.body
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" })
+    }
+    try {
+        const user = await User.findOne({ where: { email } })
+        if (!user) {
+            return res.status(404).json({ error: "User not found" })
+        }
+        const isPasswordValid = await verifyPassword(user, password)
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid password" })
+        }
+        const task = await Task.findByPk(id)
+        if (!task) {
+            return res.status(404).json({ error: "Task not found" })
+        }
+        await task.destroy()
+        res.status(204).send()
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+})
+
 sequelize.sync().then(() => {
     app.listen(port, () => {
         console.log(`Server is running on port ${port}`)

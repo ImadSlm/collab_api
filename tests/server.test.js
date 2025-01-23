@@ -7,6 +7,7 @@ const Task = require("../models/task");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const rateLimit = require("express-rate-limit");
+const { ImageResponse } = require("next/server");
 const app = express();
 
 app.use(bodyParser.json());
@@ -83,6 +84,59 @@ app.get("/task/:id", async (req, res) => {
     }
 });
 
+app.put("/task/:id", async (req, res) => {
+    const { id } = req.params
+    const { title, description, email, password } = req.body
+    if (!title || !email || !password) {
+        return res.status(400).json({ error: "Title, email, and password are required" })
+    }
+    try {
+        const user = await User.findOne({ where: { email } })
+        if (!user) {
+            return res.status(404).json({ error: "User not found" })
+        }
+        const isPasswordValid = await verifyPassword(user, password)
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid password" })
+        }
+        const task = await Task.findByPk(id)
+        if (!task) {
+            return res.status(404).json({ error: "Task not found" })
+        }
+        task.title = title
+        task.description = description
+        await task.save()
+        res.status(200).json(task)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+})
+
+app.delete("/task/:id", async (req, res) => {
+    const { id } = req.params
+    const { email, password } = req.body
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" })
+    }
+    try {
+        const user = await User.findOne({ where: { email } })
+        if (!user) {
+            return res.status(404).json({ error: "User not found" })
+        }
+        const isPasswordValid = await verifyPassword(user, password)
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid password" })
+        }
+        const task = await Task.findByPk(id)
+        if (!task) {
+            return res.status(404).json({ error: "Task not found" })
+        }
+        await task.destroy()
+        res.status(204).send()
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+})
 
 
 // TEST D'INTEGRATION //
@@ -239,24 +293,34 @@ describe("API Routes", () => {
 
     // TESTS FONCTIONNELS //
 
-    // test("PUT /task/:id - update a task", async () => {
-    //     const user = await User.create({ email: "updateuser@example.com", password: "password123" });
-    //     const task = await Task.create({ title: "Old Task", description: "Old Description", userId: user.id });
-    //     const response = await request(app)
-    //         .put(`/task/${task.id}`)
-    //         .send({ title: "Updated Task", description: "Updated Description" });
-    //     expect(response.statusCode).toBe(200);
-    //     expect(response.body).toHaveProperty("title", "Updated Task");
-    //     expect(response.body).toHaveProperty("description", "Updated Description");
-    // });
+    // test de modification d'une tâche
+    test("PUT /task/:id - update a task", async () => {
+        const user = await User.create({ email: "updateuser@example.com", password: "password123" });
+        const task = await Task.create({ title: "Old Task", description: "Old Description", userId: user.id });
+        const response = await request(app)
+            .put(`/task/${task.id}`)
+            .send({ email: "updateuser@example.com", password: "password123", title: "Updated Task", description: "Updated Description" });
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty("title", "Updated Task");
+        expect(response.body).toHaveProperty("description", "Updated Description");
+    
+        // Vérification de la modification
+        const updatedTask = await Task.findByPk(task.id);
+        expect(updatedTask.title).toBe("Updated Task");
+        expect(updatedTask.description).toBe("Updated Description");
+    });
 
-    // // test de suppression d'une tâche
-    // test("DELETE /task/:id - delete a task", async () => {
-    //     const user = await User.create({ email: "deleteuser@example.com", password: "password123" });
-    //     const task = await Task.create({ title: "Task to Delete", description: "Description", userId: user.id });
-    //     const response = await request(app).delete(`/task/${task.id}`);
-    //     expect(response.statusCode).toBe(204);
-    //     const deletedTask = await Task.findByPk(task.id);
-    //     expect(deletedTask).toBeNull();
-    // });
+    // test de suppression d'une tâche
+    test("DELETE /task/:id - delete a task", async () => {
+        const user = await User.create({ email: "deleteuser@example.com", password: "password123" });
+        const task = await Task.create({ title: "Task to Delete", description: "Description", userId: user.id });
+        const response = await request(app)
+            .delete(`/task/${task.id}`)
+            .send({ email: "deleteuser@example.com", password: "password123" });;
+        expect(response.statusCode).toBe(204);
+
+        //Vérification de la suppression
+        const deletedTask = await Task.findByPk(task.id);
+        expect(deletedTask).toBeNull();
+    });
 });

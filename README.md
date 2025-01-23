@@ -1,7 +1,8 @@
 # API de Collaboration
 
 ## Description
-Ce projet est une API collaborative qui permet aux utilisateurs de gérer des tâches et de collaborer avec les membres de l'équipe. Il offre des fonctionnalités telles que la création, la modification, la suppression de tâches et l'authentification des utilisateurs.
+Ce projet est une API collaborative qui permet aux utilisateurs de gérer des tâches et de collaborer avec les membres de l'équipe. Il offre des fonctionnalités telles que la création, la modification
+<!-- , la suppression de tâches et l'authentification des utilisateurs. -->
 
 ## Installation
 Pour installer le projet, clonez le dépôt et installez les dépendances :
@@ -22,8 +23,8 @@ Le serveur démarrera sur `http://localhost:3000`.
 - `POST /user` - Authentifier un utilisateur
 - `POST /tasks` - Créer une nouvelle tâche
 - `GET /tasks` - Obtenir toutes les tâches
-- `PUT /task/:id` - Mettre à jour une tâche
-- `DELETE /task/:id` - Supprimer une tâche
+<!-- - `PUT /task/:id` - Mettre à jour une tâche
+- `DELETE /task/:id` - Supprimer une tâche -->
 
 ### TO DO :
 - Faire test sécuritaires et test unitaires
