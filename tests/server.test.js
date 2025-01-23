@@ -85,6 +85,42 @@ app.get("/task/:id", async (req, res) => {
 
 
 
+// TEST D'INTEGRATION //
+describe("POST /auth", () => {
+    beforeAll(async () => {
+        await sequelize.sync({ force: true });
+    });
+
+    it("should create a new user with valid email and password", async () => {
+        const res = await request(app)
+            .post("/auth")
+            .send({ email: "test@example.com", password: "password123" });
+
+        expect(res.statusCode).toEqual(201);
+        expect(res.body).toHaveProperty("email", "test@example.com");
+    });
+
+    it("should return 400 for invalid email", async () => {
+        const res = await request(app)
+            .post("/auth")
+            .send({ email: "invalid-email", password: "password123" });
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.body).toHaveProperty("error", "Invalid input");
+    });
+
+    it("should return 400 for short password", async () => {
+        const res = await request(app)
+            .post("/auth")
+            .send({ email: "test@example.com", password: "short" });
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.body).toHaveProperty("error", "Invalid input");
+    });
+});
+
+
+
 describe("API Routes", () => {
     beforeAll(async () => {
         await sequelize.sync({ force: true });
