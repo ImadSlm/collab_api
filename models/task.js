@@ -2,6 +2,7 @@ const { DataTypes } = require("sequelize")
 const sequelize = require("../config/database")
 const User = require("./user")
 
+// Création du modèle Task
 const Task = sequelize.define("Task", {
     title: {
         type: DataTypes.STRING,

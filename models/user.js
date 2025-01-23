@@ -3,6 +3,7 @@ const sequelize = require("../config/database");
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
 
+// Création du modèle User
 const User = sequelize.define("User", {
     id: {
         type: DataTypes.UUID,
