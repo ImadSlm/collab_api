@@ -20,7 +20,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3001:3000"
+      - "3000:3000"
     environment:
       - DB_DATABASE=${DB_DATABASE}
       - DB_USERNAME=${DB_USERNAME}
@@ -30,12 +30,6 @@ services:
       db:
         condition: service_healthy
         restart: true
-        
-    # volumes:
-    #   - .:/app
-    # command: npm start
-
 
 volumes:
-  # app:
   db_data:
