@@ -144,6 +144,10 @@ describe("POST /auth", () => {
         await sequelize.sync({ force: true });
     });
 
+    afterAll(async () => {
+        await sequelize.close();
+    });
+
     it("should create a new user with valid email and password", async () => {
         const res = await request(app)
             .post("/auth")
