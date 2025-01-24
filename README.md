@@ -27,7 +27,6 @@ Le serveur démarrera sur `http://localhost:3000`.
 
 ## Docker
 Pour utiliser ce projet avec Docker :
-
 ```bash
 docker-compose up --build
 ```
