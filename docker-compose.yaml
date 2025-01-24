@@ -30,6 +30,18 @@ services:
       db:
         condition: service_healthy
         restart: true
+  tests:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    environment:
+      - DB_DATABASE=${DB_APP_DATABASE}
+      - DB_USERNAME=${DB_APP_USERNAME}
+      - DB_PASSWORD=${DB_APP_PASSWORD}
+      - DB_HOST=${DB_APP_HOST}
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   db_data:

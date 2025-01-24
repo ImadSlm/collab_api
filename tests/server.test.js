@@ -7,7 +7,6 @@ const Task = require("../models/task");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const rateLimit = require("express-rate-limit");
-const { ImageResponse } = require("next/server");
 const app = express();
 
 app.use(bodyParser.json());
@@ -220,7 +219,7 @@ describe("API Routes", () => {
         const user = await User.create({ email: "testtask@example.com", password: "password123" });
         const response = await request(app)
             .post("/task")
-            .send({ title: "Test Create Task", userId: user.id });
+            .send({ title: "Test Create Task", description: "Testing Task Creation", userId: user.id });
         expect(response.statusCode).toBe(201);
         expect(response.body).toHaveProperty("userId", user.id);
         expect(response.body).toHaveProperty("title", "Test Create Task");
