@@ -19,6 +19,7 @@
         "jsonwebtoken": "^9.0.2",
         "mariadb": "^3.4.0",
         "mongoose": "^8.8.4",
+        "newman": "^6.2.1",
         "sequelize": "^6.37.5",
         "uuid": "^11.0.5",
         "validator": "^13.12.0"

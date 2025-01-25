@@ -43,6 +43,15 @@ app.post("/auth", loginLimiter, async (req, res) => {
     }
 })
 
+app.get("/users", async (req, res) => {
+    try {
+        const users = await User.findAll();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 app.get("/tasks", async (req, res) => {
     try {
         const tasks = await Task.findAll();
@@ -144,10 +153,6 @@ describe("POST /auth", () => {
         await sequelize.sync({ force: true });
     });
 
-    afterAll(async () => {
-        await sequelize.close();
-    });
-
     it("should create a new user with valid email and password", async () => {
         const res = await request(app)
             .post("/auth")
@@ -229,13 +234,20 @@ describe("API Routes", () => {
         expect(response.body).toHaveProperty("title", "Test Create Task");
     });
 
+    // test de récupération de tous les utilisateurs
+    test("GET /users - get all users", async () => {
+        const response = await request(app).get("/users");
+        expect(response.statusCode).toBe(200);
+        expect(Array.isArray(response.body)).toBe(true);
+    });
+    
     // test de récupération de toutes les tâches
     test("GET /tasks - get all tasks", async () => {
         const response = await request(app).get("/tasks");
         expect(response.statusCode).toBe(200);
         expect(Array.isArray(response.body)).toBe(true);
     });
-
+    
     // test de récupération d'une tâche par son identifiant
     test("GET /task/:id - get task by id", async () => {
         const user = await User.create({ email: "testuser@example.com", password: "password123" });
