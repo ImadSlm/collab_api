@@ -19,11 +19,12 @@ npm start
 Le serveur démarrera sur `http://localhost:3000`.
 
 ## Endpoints
-- `POST /user` - Authentifier un utilisateur
+- `POST /auth` - Authentifier un utilisateur
 - `POST /tasks` - Créer une nouvelle tâche
-- `GET /tasks` - Obtenir toutes les tâches
+- `GET /users` - Afficher tous les utilisateurs
+- `GET /tasks` - Afficher toutes les tâches
 - `PUT /task/:id` - Mettre à jour une tâche
-- `DELETE /task/:id` - Supprimer une tâche$
+- `DELETE /task/:id` - Supprimer une tâche
 
 ## Docker
 Pour utiliser ce projet avec Docker :

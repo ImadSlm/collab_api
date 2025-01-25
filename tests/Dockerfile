@@ -22,5 +22,7 @@ COPY . .
 # Exposer le port de l'app
 EXPOSE 3003
 
-# commande pour éxecuter l'app
+# commande pour éxecuter les tests
 CMD ["npm", "run","test"]
+
+# CMD ["sh", "-c", "npm run test && newman run /app/tests/postman/collabdb.postman_collection.json"]
