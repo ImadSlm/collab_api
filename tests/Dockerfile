@@ -13,8 +13,8 @@ RUN npm install
 
 # Rebuild des modules natifs
 # RUN npm rebuild bcrypt --build-from-source
-RUN npm install -g bcrypt
-RUN npm install -g newman dotenv
+# RUN npm install -g bcrypt
+RUN npm install -g bcrypt newman dotenv
 
 # Copie du reste des fichiers
 COPY . .
