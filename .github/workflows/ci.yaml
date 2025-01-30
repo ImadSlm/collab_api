@@ -18,7 +18,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Test ports
+      - name: Start Docker
+        run: sudo systemctl start docker
+        
+      - name: Vérifier les conteneurs
         run: docker ps
 
       - name: Checkout
