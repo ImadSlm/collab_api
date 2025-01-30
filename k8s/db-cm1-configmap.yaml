@@ -1,0 +1,19 @@
+apiVersion: v1
+data:
+  initdb.sql: |-
+    CREATE DATABASE collabdb;
+
+    CREATE USER 'app_user' IDENTIFIED BY 'app_password';
+
+    -- username n'a accès qu'à la base mydb
+    GRANT SELECT, INSERT, UPDATE, DELETE ON collabdb.* TO 'user'@'localhost';
+
+    -- Utilisation de la base de données mydb
+    USE collabdb;
+kind: ConfigMap
+metadata:
+  annotations:
+    use-subpath: "true"
+  labels:
+    io.kompose.service: db
+  name: db-cm1

@@ -1,0 +1,33 @@
+services:
+  db:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  tests:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    environment:
+      - DB_DATABASE=${DB_APP_DATABASE}
+      - DB_USERNAME=${DB_APP_USERNAME}
+      - DB_PASSWORD=${DB_APP_PASSWORD}
+      - DB_HOST=${DB_APP_HOST}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["npm", "run", "test"]
+
+volumes:
+  db_data:

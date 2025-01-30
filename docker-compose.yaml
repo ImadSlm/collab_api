@@ -2,46 +2,59 @@ services:
   db:
     image: mariadb:latest
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=/run/secrets/db_password
       - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_USER=/run/secrets/app_user
+      - MYSQL_PASSWORD=/run/secrets/app_password
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       start_period: 5s
       interval: 5s
       timeout: 5s
       retries: 3
+    secrets:
+      - db_password
+      - app_user
+      - app_password
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image : imadslm/collab_api-app:latest
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
       - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_USERNAME=/run/secrets/app_user
+      - DB_PASSWORD=/run/secrets/app_password
       - DB_HOST=${DB_HOST}
+    healthcheck:
+      test: curl --fail http://localhost:3000/ || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 3
+      start_period: 60s
     depends_on:
       db:
         condition: service_healthy
         restart: true
-  tests:
-    build:
-      context: .
-      dockerfile: tests/Dockerfile
-    environment:
-      - DB_DATABASE=${DB_APP_DATABASE}
-      - DB_USERNAME=${DB_APP_USERNAME}
-      - DB_PASSWORD=${DB_APP_PASSWORD}
-      - DB_HOST=${DB_APP_HOST}
-    depends_on:
-      db:
-        condition: service_healthy
+    secrets:
+      - db_password
+      - app_user
+      - app_password
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  app_user:
+    file: ./secrets/app_user.txt
+  app_password:
+    file: ./secrets/app_password.txt
 
 volumes:
   db_data:
