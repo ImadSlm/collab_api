@@ -17,6 +17,16 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: mariadb:latest
+        env:
+          DB_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - "3306:3306"
     steps:
       - name: Start Docker
         run: sudo systemctl start docker
@@ -37,11 +47,12 @@ jobs:
 
       - name: Lancer les tests
         env:
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_APP_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_APP_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_APP_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_APP_HOST: ${{ secrets.DB_HOST }}
         run: npm run test
+        #! problème : le conteneur n'est pas lancé
 
       - name: Construire l'image Docker
         run: docker build -t collab_api-app .
