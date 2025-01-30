@@ -21,10 +21,10 @@ jobs:
       db:
         image: mariadb:latest
         env:
-          DB_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_ROOT_PASSWORD: db_password
+          DB_DATABASE: collabdb
+          DB_USERNAME: app_user
+          DB_PASSWORD: app_password
         ports:
           - "3306:3306"
     steps:
@@ -47,10 +47,10 @@ jobs:
 
       - name: Lancer les tests
         env:
-          DB_APP_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_APP_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_APP_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_APP_HOST: ${{ secrets.DB_HOST }}
+          DB_APP_DATABASE: collabdb
+          DB_APP_USERNAME: app_user
+          DB_APP_PASSWORD: app_password
+          DB_APP_HOST: localhost
         run: npm run test
         #! problème : le conteneur n'est pas lancé
 
