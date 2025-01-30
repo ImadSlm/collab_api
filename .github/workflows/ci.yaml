@@ -45,12 +45,19 @@ jobs:
       - name: Installation des dépendances
         run: npm install
 
+      - name: Wait for DB to be ready
+        run: |
+          until mysqladmin ping -h 127.0.0.1 --silent; do
+            echo 'waiting for db to be ready...'
+            sleep 5
+          done
+
       - name: Lancer les tests
         env:
           DB_APP_DATABASE: collabdb
           DB_APP_USERNAME: app_user
           DB_APP_PASSWORD: app_password
-          DB_APP_HOST: localhost
+          DB_APP_HOST: 127.0.0.1
         run: npm run test
         #! problème : le conteneur n'est pas lancé
 
