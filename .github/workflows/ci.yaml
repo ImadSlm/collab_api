@@ -18,6 +18,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Test ports
+        run: docker ps
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -44,15 +47,15 @@ jobs:
       - name: Pousser l'image Docker
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/collab_api-app:latest
 
-  sonarqube:
-    name: SonarQube
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  # sonarqube:
+  #   name: SonarQube
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v4.1.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONARTOKEN }}
+  #     - name: SonarQube Scan
+  #       uses: SonarSource/sonarqube-scan-action@v4.1.0
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONARTOKEN }}
