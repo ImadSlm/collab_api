@@ -184,9 +184,9 @@ describe("POST /auth", () => {
 
 
 describe("API Routes", () => {
-    // beforeAll(async () => {
-    //     await sequelize.sync({ force: true });
-    // });
+    beforeAll(async () => {
+        await sequelize.sync({ force: true });
+    });
 
     afterAll(async () => {
         await sequelize.close();
