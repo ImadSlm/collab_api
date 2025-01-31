@@ -48,6 +48,13 @@ jobs:
         DB_APP_PASSWORD: "toto"
         DB_APP_HOST: localhost
       run: npm run test
+    
+    - name: Install Newman
+      run: npm install -g newman
+
+    - name: Run Postman Collection
+      run: newman run tests/postman/collabdb.postman_collection.json
+
 
   docker:
     runs-on: ubuntu-latest
