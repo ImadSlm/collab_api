@@ -47,7 +47,7 @@ jobs:
         echo "DB_HOST: ${{ secrets.DB_HOST }}"
 
     - name: debug
-      run: ls home/runner/work/collab_api
+      run: ls home/runner/work
 
     - name: Start Docker
       run: sudo systemctl start docker
