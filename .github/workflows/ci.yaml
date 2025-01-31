@@ -56,7 +56,7 @@ jobs:
       run: chmod 777 /home/runner/work/collab_api/collab_api/initdb.sh
 
     - name: Docker compose
-      run: docker compose up
+      run: docker compose up -d
 
     - name: Docker logs
       run: docker ps
