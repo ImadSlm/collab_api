@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      db:
+      dbwtf:
         image: mariadb:latest
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -66,7 +66,7 @@ jobs:
         DB_APP_DATABASE: ${{ secrets.DB_APP_DATABASE }}
         DB_APP_USERNAME: "saleemvanot"
         DB_APP_PASSWORD: ${{ secrets.DB_APP_PASSWORD }}
-        DB_APP_HOST: localhost
+        DB_APP_HOST: dbwtf
       run: npm run test
 
   docker:
