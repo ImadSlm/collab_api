@@ -2,7 +2,7 @@ services:
   db:
     image: mariadb:latest
     environment:
-      - MYSQL_ROOT_PASSWORD=db_password
+      - MYSQL_ROOT_PASSWORD=db_root_password
       - MYSQL_DATABASE=db_database
       - MYSQL_USER=db_username
       - MYSQL_PASSWORD=db_password
@@ -27,6 +27,7 @@ services:
       - db_app_database
       - db_host
       - db_app_host
+      - db_root_password
   app:
     # image : imadslm/collab_api-app:latest
     build:
@@ -76,5 +77,7 @@ secrets:
     file: ./secrets/db_host.txt
   db_app_host:
     file: ./secrets/db_app_host.txt
+  db_root_password:
+    file: ./secrets/db_root_password.txt
 volumes:
   db_data:
