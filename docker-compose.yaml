@@ -24,10 +24,10 @@ services:
       - db_app_password
       - db_host
   app:
-    image : imadslm/collab_api-app:latest
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    # image : imadslm/collab_api-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
