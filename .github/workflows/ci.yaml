@@ -15,7 +15,7 @@ jobs:
       dbwtf:
         image: mariadb:latest
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: toto
           MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
           MYSQL_USER: saleemvanot
           MYSQL_PASSWORD: toto
@@ -60,7 +60,7 @@ jobs:
     - name: Run tests
       env:
         DB_APP_DATABASE: ${{ secrets.DB_APP_DATABASE }}
-        DB_APP_USERNAME: "saleemvanot"
+        DB_APP_USERNAME: "root"
         DB_APP_PASSWORD: "toto"
         DB_APP_HOST: localhost
       run: npm run test
