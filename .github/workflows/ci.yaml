@@ -18,7 +18,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
           MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
           MYSQL_USER: saleemvanot
-          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_PASSWORD: toto
         ports:
           - 3341:3306
         options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -61,7 +61,7 @@ jobs:
       env:
         DB_APP_DATABASE: ${{ secrets.DB_APP_DATABASE }}
         DB_APP_USERNAME: "saleemvanot"
-        DB_APP_PASSWORD: ${{ secrets.DB_APP_PASSWORD }}
+        DB_APP_PASSWORD: "toto"
         DB_APP_HOST: localhost
       run: npm run test
 
