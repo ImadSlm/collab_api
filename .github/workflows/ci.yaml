@@ -62,7 +62,7 @@ jobs:
         DB_APP_DATABASE: ${{ secrets.DB_APP_DATABASE }}
         DB_APP_USERNAME: "saleemvanot"
         DB_APP_PASSWORD: ${{ secrets.DB_APP_PASSWORD }}
-        DB_APP_HOST: dbwtf
+        DB_APP_HOST: localhost
       run: npm run test
 
   docker:
