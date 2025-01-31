@@ -17,7 +17,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
           MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
-          MYSQL_USER: ${{ secrets.DB_USERNAME }}
+          MYSQL_USER: saleemvanot
           MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 3341:3306
