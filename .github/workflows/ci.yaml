@@ -41,6 +41,17 @@ jobs:
     #     echo "DB_PASSWORD: ${{ secrets.DB_PASSWORD }}"
     #     echo "DB_HOST: ${{ secrets.DB_HOST }}"
 
+    - name: Start server
+      run: node server.js &
+      env:
+        DB_APP_DATABASE: "dtc"
+        DB_APP_USERNAME: "root"
+        DB_APP_PASSWORD: "toto"
+        DB_APP_HOST: localhost
+
+    - name: Wait for server to be ready
+      run: sleep 10
+
     - name: Run tests
       env:
         DB_APP_DATABASE: "dtc"
@@ -54,6 +65,9 @@ jobs:
 
     - name: Run Postman Collection
       run: newman run tests/postman/collabdb.postman_collection.json
+    
+    - name: Stop server
+      run: kill $(jobs -p)
 
 
   docker:
