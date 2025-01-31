@@ -31,10 +31,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_DATABASE=${DB_APP_DATABASE}
-      - DB_USERNAME=${DB_APP_USERNAME}
-      - DB_PASSWORD=${DB_APP_PASSWORD}
-      - DB_HOST=${DB_APP_HOST}
+      DB_DATABASE: ${DB_APP_DATABASE}
+      DB_USERNAME: ${DB_APP_USERNAME}
+      DB_PASSWORD: ${DB_APP_PASSWORD}
+      DB_HOST: ${DB_APP_HOST}
     # healthcheck:
     #   test: curl --fail http://localhost:3000/ || exit 1
     #   interval: 40s
