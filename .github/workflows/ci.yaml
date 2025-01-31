@@ -16,7 +16,7 @@ jobs:
         image: mariadb:latest
         env:
           MYSQL_ROOT_PASSWORD: toto
-          MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
+          MYSQL_DATABASE: dtc
           MYSQL_USER: saleemvanot
           MYSQL_PASSWORD: toto
         ports:
@@ -59,7 +59,7 @@ jobs:
 
     - name: Run tests
       env:
-        DB_APP_DATABASE: ${{ secrets.DB_APP_DATABASE }}
+        DB_APP_DATABASE: "dtc"
         DB_APP_USERNAME: "root"
         DB_APP_PASSWORD: "toto"
         DB_APP_HOST: localhost
