@@ -1,9 +1,9 @@
 CREATE DATABASE collabdb;
 
-CREATE USER 'app_user' IDENTIFIED BY 'app_password';
+CREATE USER 'USERNAME_PLACEHOLDER' IDENTIFIED BY 'PASSWORD_PLACEHOLDER';
 
--- username n'a accès qu'à la base mydb
-GRANT SELECT, INSERT, UPDATE, DELETE ON collabdb.* TO 'app_user'@'localhost';
+-- L'utilisateur n'a accès qu'à la BDD
+GRANT SELECT, INSERT, UPDATE, DELETE ON collabdb.* TO 'USERNAME_PLACEHOLDER'@'%';
 
--- Utilisation de la base de données mydb
+-- Utilisation de la base de données 'collabdb'
 USE collabdb;
