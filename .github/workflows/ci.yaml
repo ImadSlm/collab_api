@@ -11,6 +11,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      db:
+        image: mariadb:latest
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
+          MYSQL_USER: ${{ secrets.DB_USERNAME }}
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 3341:3306
+        # options: >-
+        #   --health-cmd="mysqladmin ping --silent"
+        #   --health-interval=10s
+        #   --health-timeout=5s
+        #   --health-retries=3
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -30,27 +46,27 @@ jobs:
         echo "DB_PASSWORD: ${{ secrets.DB_PASSWORD }}"
         echo "DB_HOST: ${{ secrets.DB_HOST }}"
 
-    - name: debug
-      run: ls /home/runner/work/collab_api/collab_api
+    # - name: debug
+    #   run: ls /home/runner/work/collab_api/collab_api
 
-    - name: Start Docker
-      run: sudo systemctl start docker
+    # - name: Start Docker
+    #   run: sudo systemctl start docker
 
-    - name: bourrin
-      run: chmod 777 /home/runner/work/collab_api/collab_api/initdb.sh
+    # - name: bourrin
+    #   run: chmod 777 /home/runner/work/collab_api/collab_api/initdb.sh
 
-    - name: Docker compose
-      run: docker compose up -d
+    # - name: Docker compose
+    #   run: docker compose up -d
 
-    - name: Docker logs
-      run: docker ps
+    # - name: Docker logs
+    #   run: docker ps
 
     - name: Run tests
       env:
         DB_DATABASE: ${{ secrets.DB_APP_DATABASE }}
         DB_USERNAME: ${{ secrets.DB_APP_USERNAME }}
         DB_PASSWORD: ${{ secrets.DB_APP_PASSWORD }}
-        DB_HOST: ${{ secrets.DB_APP_HOST }}
+        DB_HOST: db
       run: npm run test
 
   docker:
