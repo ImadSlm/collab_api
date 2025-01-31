@@ -63,10 +63,10 @@ jobs:
 
     - name: Run tests
       env:
-        DB_DATABASE: ${{ secrets.DB_APP_DATABASE }}
+        DB_APP_DATABASE: ${{ secrets.DB_APP_DATABASE }}
         DB_APP_USERNAME: "saleemvanot"
-        DB_PASSWORD: ${{ secrets.DB_APP_PASSWORD }}
-        DB_HOST: db
+        DB_APP_PASSWORD: ${{ secrets.DB_APP_PASSWORD }}
+        DB_APP_HOST: db
       run: npm run test
 
   docker:
