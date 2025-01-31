@@ -29,7 +29,7 @@ services:
       - db_app_host
       - db_root_password
   app:
-    # image : imadslm/collab_api-app:latest
+    # image : imadslm/collab_api-app:latest # Décommenter pour faire tourner l'api en local, et commenter le build
     build:
       context: .
       dockerfile: Dockerfile
