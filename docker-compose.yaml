@@ -2,10 +2,10 @@ services:
   db:
     image: mariadb:latest
     environment:
-      - MYSQL_ROOT_PASSWORD=/run/secrets/db_password
-      - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=${DB_USERNAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=db_password
+      - MYSQL_DATABASE=db_database
+      - MYSQL_USER=db_username
+      - MYSQL_PASSWORD=db_password
     ports:
       - "3341:3306"
     volumes:
@@ -20,9 +20,13 @@ services:
       retries: 3
     secrets:
       - db_password
-      - db_app_username
       - db_app_password
+      - db_username
+      - db_app_username
+      - db_database
+      - db_app_database
       - db_host
+      - db_app_host
   app:
     # image : imadslm/collab_api-app:latest
     build:
@@ -31,34 +35,46 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DB_DATABASE: ${DB_APP_DATABASE}
-      DB_USERNAME: ${DB_APP_USERNAME}
-      DB_PASSWORD: ${DB_APP_PASSWORD}
-      DB_HOST: ${DB_APP_HOST}
-    # healthcheck:
-    #   test: curl --fail http://localhost:3000/ || exit 1
-    #   interval: 40s
-    #   timeout: 30s
-    #   retries: 3
-    #   start_period: 60s
+      DB_DATABASE: db_app_database
+      DB_USERNAME: db_app_username
+      DB_PASSWORD: db_app_password
+      DB_HOST: db_app_host
+    healthcheck:
+      test: curl --fail http://localhost:3000/ || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 3
+      start_period: 60s
     depends_on:
       db:
         condition: service_healthy
         restart: true
     secrets:
       - db_password
-      - db_app_username
       - db_app_password
+      - db_username
+      - db_app_username
+      - db_database
+      - db_app_database
       - db_host
+      - db_app_host
 
 secrets:
   db_password:
     file: ./secrets/db_password.txt
-  db_app_username:
-    file: ./secrets/db_app_username.txt
   db_app_password:
     file: ./secrets/db_app_password.txt
+  db_username:
+    file: ./secrets/db_username.txt
+  db_app_username:
+    file: ./secrets/db_app_username.txt
+  db_database:
+    file: ./secrets/db_database.txt
+  db_app_database:
+    file: ./secrets/db_app_database.txt
   db_host:
     file: ./secrets/db_host.txt
+  db_app_host:
+    file: ./secrets/db_app_host.txt
 volumes:
   db_data:

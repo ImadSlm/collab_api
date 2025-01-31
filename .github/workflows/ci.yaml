@@ -16,8 +16,7 @@ jobs:
         image: mariadb:latest
         env:
           MYSQL_ROOT_PASSWORD: toto
-          MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
-          MYSQL_USER: saleemvanot
+          MYSQL_DATABASE: dtc
           MYSQL_PASSWORD: toto
         ports:
           - 3341:3306
@@ -35,31 +34,16 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Log environment variables
-      run: |
-        echo "DB_DATABASE: ${{ secrets.DB_DATABASE }}"
-        echo "DB_USERNAME: ${{ secrets.DB_USERNAME }}"
-        echo "DB_PASSWORD: ${{ secrets.DB_PASSWORD }}"
-        echo "DB_HOST: ${{ secrets.DB_HOST }}"
-
-    # - name: debug
-    #   run: ls /home/runner/work/collab_api/collab_api
-
-    # - name: Start Docker
-    #   run: sudo systemctl start docker
-
-    # - name: bourrin
-    #   run: chmod 777 /home/runner/work/collab_api/collab_api/initdb.sh
-
-    # - name: Docker compose
-    #   run: docker compose up -d
-
-    # - name: Docker logs
-    #   run: docker ps
+    # - name: Log environment variables
+    #   run: |
+    #     echo "DB_DATABASE: ${{ secrets.DB_DATABASE }}"
+    #     echo "DB_USERNAME: ${{ secrets.DB_USERNAME }}"
+    #     echo "DB_PASSWORD: ${{ secrets.DB_PASSWORD }}"
+    #     echo "DB_HOST: ${{ secrets.DB_HOST }}"
 
     - name: Run tests
       env:
-        DB_APP_DATABASE: ${{ secrets.DB_APP_DATABASE }}
+        DB_APP_DATABASE: "dtc"
         DB_APP_USERNAME: "root"
         DB_APP_PASSWORD: "toto"
         DB_APP_HOST: localhost
