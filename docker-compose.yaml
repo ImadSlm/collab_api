@@ -4,8 +4,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=/run/secrets/db_password
       - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=/run/secrets/app_user
-      - MYSQL_PASSWORD=/run/secrets/app_password
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -29,10 +29,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=/run/secrets/app_user
-      - DB_PASSWORD=/run/secrets/app_password
-      - DB_HOST=${DB_HOST}
+      - DB_DATABASE=${DB_APP_DATABASE}
+      - DB_USERNAME=${DB_APP_USERNAME}
+      - DB_PASSWORD=${DB_APP_PASSWORD}
+      - DB_HOST=${DB_APP_HOST}
     healthcheck:
       test: curl --fail http://localhost:3000/ || exit 1
       interval: 40s
