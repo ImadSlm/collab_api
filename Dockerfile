@@ -19,7 +19,7 @@ RUN npm list
 RUN npm install -g bcrypt newman dotenv
 
 # Copie du reste des fichiers
-COPY . .
+COPY --chmod=777 . .
 
 # Exposer le port de l'app
 EXPOSE 3000
