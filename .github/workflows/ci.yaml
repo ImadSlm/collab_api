@@ -46,7 +46,7 @@ jobs:
       run: docker ps
 
     - name: Mariadb
-      run: docker-compose mariadb bash -c "mariadb -u ${{ secrets.DB_USERNAME }} --password ${{ secrets.DB_PASSWORD }} ${{ secrets.DB_DATABASE }} < initbd.sql"
+      run: docker compose mariadb bash -c "mariadb -u ${{ secrets.DB_USERNAME }} --password ${{ secrets.DB_PASSWORD }} ${{ secrets.DB_DATABASE }} < initbd.sql"
 
     - name: Run tests
       env:
