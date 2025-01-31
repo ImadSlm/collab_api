@@ -44,6 +44,3 @@ coverage/
 .vscode/
 
 z_annexe.txt
-
-# Secrets
-secrets/
