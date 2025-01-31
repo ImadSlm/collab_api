@@ -53,7 +53,7 @@ jobs:
       run: sudo systemctl start docker
 
     - name: Docker compose
-      run: docker compose up -d
+      run: docker compose up
 
     - name: Docker logs
       run: docker logs collab_api_db_1
