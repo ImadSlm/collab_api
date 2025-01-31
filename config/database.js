@@ -8,7 +8,7 @@ const host = process.env.DB_APP_HOST
 // Création d'une instance de Sequelize pour se connecter à la base de données
 const sequelize = new Sequelize(database, username, password, {
     host: host,
-    port: 3306,
+    port: 3341,
     dialect: "mariadb",
 })
 
