@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yaml
+    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yaml -o k8s/
     kompose.version: 1.34.0 (cbf2835db)
   labels:
     io.kompose.service: db
@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yaml
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yaml -o k8s/
         kompose.version: 1.34.0 (cbf2835db)
       labels:
         io.kompose.service: db
@@ -25,12 +25,13 @@ spec:
       containers:
         - env:
             - name: MYSQL_DATABASE
+              value: db_database
             - name: MYSQL_PASSWORD
-              value: /run/secrets/app-password
-            - name: MYSQL_ROOT_PASSWORD
               value: db_password
+            - name: MYSQL_ROOT_PASSWORD
+              value: db_root_password
             - name: MYSQL_USER
-              value: /run/secrets/app-user
+              value: db_username
           image: mariadb:latest
           livenessProbe:
             exec:
@@ -51,16 +52,37 @@ spec:
               name: db-password
               subPath: db-password
             - mountPath: /run/secrets
-              name: app-user
-              subPath: app-user
+              name: db-app-password
+              subPath: db-app-password
             - mountPath: /run/secrets
-              name: app-password
-              subPath: app-password
+              name: db-username
+              subPath: db-username
+            - mountPath: /run/secrets
+              name: db-app-username
+              subPath: db-app-username
+            - mountPath: /run/secrets
+              name: db-database
+              subPath: db-database
+            - mountPath: /run/secrets
+              name: db-app-database
+              subPath: db-app-database
+            - mountPath: /run/secrets
+              name: db-host
+              subPath: db-host
+            - mountPath: /run/secrets
+              name: db-app-host
+              subPath: db-app-host
+            - mountPath: /run/secrets
+              name: db-root-password
+              subPath: db-root-password
             - mountPath: /var/lib/mysql
               name: db-data
             - mountPath: /docker-entrypoint-initdb.d/initdb.sql
               name: db-cm1
               subPath: initdb.sql
+            - mountPath: /docker-entrypoint-initdb.d/initdb.sh
+              name: db-cm2
+              subPath: initdb.sh
       restartPolicy: Always
       volumes:
         - name: db-password
@@ -69,18 +91,54 @@ spec:
               - key: db-password
                 path: db-password
             secretName: db-password
-        - name: app-user
+        - name: db-app-password
           secret:
             items:
-              - key: app-user
-                path: app-user
-            secretName: app-user
-        - name: app-password
+              - key: db-app-password
+                path: db-app-password
+            secretName: db-app-password
+        - name: db-username
           secret:
             items:
-              - key: app-password
-                path: app-password
-            secretName: app-password
+              - key: db-username
+                path: db-username
+            secretName: db-username
+        - name: db-app-username
+          secret:
+            items:
+              - key: db-app-username
+                path: db-app-username
+            secretName: db-app-username
+        - name: db-database
+          secret:
+            items:
+              - key: db-database
+                path: db-database
+            secretName: db-database
+        - name: db-app-database
+          secret:
+            items:
+              - key: db-app-database
+                path: db-app-database
+            secretName: db-app-database
+        - name: db-host
+          secret:
+            items:
+              - key: db-host
+                path: db-host
+            secretName: db-host
+        - name: db-app-host
+          secret:
+            items:
+              - key: db-app-host
+                path: db-app-host
+            secretName: db-app-host
+        - name: db-root-password
+          secret:
+            items:
+              - key: db-root-password
+                path: db-root-password
+            secretName: db-root-password
         - name: db-data
           persistentVolumeClaim:
             claimName: db-data
@@ -90,3 +148,9 @@ spec:
                 path: initdb.sql
             name: db-cm1
           name: db-cm1
+        - configMap:
+            items:
+              - key: initdb.sh
+                path: initdb.sh
+            name: db-cm2
+          name: db-cm2

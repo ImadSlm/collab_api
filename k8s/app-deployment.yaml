@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yaml
+    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yaml -o k8s/
     kompose.version: 1.34.0 (cbf2835db)
   labels:
     io.kompose.service: app
@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yaml
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yaml -o k8s/
         kompose.version: 1.34.0 (cbf2835db)
       labels:
         io.kompose.service: app
@@ -23,12 +23,14 @@ spec:
       containers:
         - env:
             - name: DB_DATABASE
+              value: db_app_database
             - name: DB_HOST
+              value: db_app_host
             - name: DB_PASSWORD
-              value: /run/secrets/app-password
+              value: db_app_password
             - name: DB_USERNAME
-              value: /run/secrets/app-user
-          image: imadslm/collab_api-app:latest
+              value: db_app_username
+          image: app
           livenessProbe:
             exec:
               command:
@@ -46,11 +48,26 @@ spec:
               name: db-password
               subPath: db-password
             - mountPath: /run/secrets
-              name: app-user
-              subPath: app-user
+              name: db-app-password
+              subPath: db-app-password
             - mountPath: /run/secrets
-              name: app-password
-              subPath: app-password
+              name: db-username
+              subPath: db-username
+            - mountPath: /run/secrets
+              name: db-app-username
+              subPath: db-app-username
+            - mountPath: /run/secrets
+              name: db-database
+              subPath: db-database
+            - mountPath: /run/secrets
+              name: db-app-database
+              subPath: db-app-database
+            - mountPath: /run/secrets
+              name: db-host
+              subPath: db-host
+            - mountPath: /run/secrets
+              name: db-app-host
+              subPath: db-app-host
       restartPolicy: Always
       volumes:
         - name: db-password
@@ -59,15 +76,45 @@ spec:
               - key: db-password
                 path: db-password
             secretName: db-password
-        - name: app-user
+        - name: db-app-password
           secret:
             items:
-              - key: app-user
-                path: app-user
-            secretName: app-user
-        - name: app-password
+              - key: db-app-password
+                path: db-app-password
+            secretName: db-app-password
+        - name: db-username
           secret:
             items:
-              - key: app-password
-                path: app-password
-            secretName: app-password
+              - key: db-username
+                path: db-username
+            secretName: db-username
+        - name: db-app-username
+          secret:
+            items:
+              - key: db-app-username
+                path: db-app-username
+            secretName: db-app-username
+        - name: db-database
+          secret:
+            items:
+              - key: db-database
+                path: db-database
+            secretName: db-database
+        - name: db-app-database
+          secret:
+            items:
+              - key: db-app-database
+                path: db-app-database
+            secretName: db-app-database
+        - name: db-host
+          secret:
+            items:
+              - key: db-host
+                path: db-host
+            secretName: db-host
+        - name: db-app-host
+          secret:
+            items:
+              - key: db-app-host
+                path: db-app-host
+            secretName: db-app-host
