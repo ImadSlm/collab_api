@@ -30,7 +30,7 @@ spec:
               value: db_app_password
             - name: DB_USERNAME
               value: db_app_username
-          image: app
+          image: imadslm/collab_api-app:latest
           livenessProbe:
             exec:
               command:
