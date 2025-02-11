@@ -7,6 +7,7 @@ const Task = require("./models/task")
 const validator = require("validator")
 const rateLimit = require("express-rate-limit");
 const bcrypt = require("bcrypt")
+const jiraService = require("./services/jiraService")
 
 const app = express()
 app.use(bodyParser.json())

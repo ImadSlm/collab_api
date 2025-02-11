@@ -8,6 +8,7 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const rateLimit = require("express-rate-limit");
 const app = express();
+const jiraService = require("../services/jiraService");
 
 app.use(bodyParser.json());
 
@@ -146,6 +147,59 @@ app.delete("/task/:id", async (req, res) => {
     }
 })
 
+app.post("/ticket", async (req, res) => {
+    const { title, description, email, password } = req.body;
+    if (!title || !email || !password) {
+        return res.status(400).json({ error: "Title, email, and password are required" })
+    }
+    try {
+        const user = await User.findOne({ where: { email } })
+        if (!user) {
+            return res.status(404).json({ error: "User not found" })
+        }
+        const isPasswordValid = await verifyPassword(user, password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid password" })
+        }
+        const jiraTicket = await jiraService.createJiraTicket(title, description);
+        res.status(201).json(jiraTicket)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+})
+
+app.put("/ticket/:id", async (req, res) => {
+    const { id } = req.params;
+    const { title, description, email, password } = req.body;
+    if (!title || !email || !password) {
+        return res.status(400).json({ error: "Title, email, and password are required" })
+    }
+    try {
+        const user = await User.findOne({ where: { email } })
+        if (!user) {
+            return res.status(404).json({ error: "User not found" })
+        }
+        const isPasswordValid = await verifyPassword(user, password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid password" })
+        }
+        const jiraTicket = await jiraService.updateJiraTicket(id, { summary: title, description: description })
+        res.status(200).json(jiraTicket)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+})
+
+app.get("/ticket/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const jiraTicket = await jiraService.getJiraTicket(id);
+        res.status(200).json(jiraTicket);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 
 // TEST D'INTEGRATION //
 describe("POST /auth", () => {
@@ -255,6 +309,16 @@ describe("API Routes", () => {
         const response = await request(app).get(`/task/${task.id}`);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("title", "Test Task");
+    });
+
+    // test de création d'un ticket Jira
+    test("POST /ticket - create a new Jira ticket", async () => {
+        const user = await User.create({ email: "testticket@example.com", password: "password123" });
+        const response = await request(app)
+            .post("/ticket")
+            .send({ title: "Test Create Ticket", description: "Testing Ticket Creation", email: user.email, password: "password123" });
+        expect(response.statusCode).toBe(201);
+        expect(response.body).toHaveProperty("summary", "Test Create Ticket");
     });
 
 
