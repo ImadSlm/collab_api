@@ -327,6 +327,7 @@ describe("API Routes", () => {
 
     // test de modification d'un ticket Jira
     test("PUT /ticket/:id - update a Jira ticket", async () => {
+        const user = await User.findOne({ where: { email: "testticket@example.com" } });
         const response = await request(app)
             .post("/ticket")
             .send({ title: "Test Updating Ticket", description: "Testing Ticket", email: user.email, password: "password123" });
