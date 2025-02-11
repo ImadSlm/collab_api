@@ -8,7 +8,21 @@ async function createJiraTicket(summary, description) {
                     key: "CLBAPI",
                 },
                 summary: summary,
-                description: description,
+                description: {
+                    type: "doc",
+                    version: 1,
+                    content: [
+                        {
+                            type: "paragraph",
+                            content: [
+                                {
+                                    type: "text",
+                                    text: description,
+                                },
+                            ],
+                        },
+                    ],
+                },
                 issuetype: {
                     name: "Task",
                 },
