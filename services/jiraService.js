@@ -41,7 +41,24 @@ async function createJiraTicket(summary, description) {
 
 async function updateJiraTicket(ticketId, fields) {
     const response = await jiraApi.put(`/rest/api/3/issue/${ticketId}`, {
-        fields: fields,
+        fields: {
+            summary: fields.summary,
+            description: {
+                type: "doc",
+                version: 1,
+                content: [
+                    {
+                        type: "paragraph",
+                        content: [
+                            {
+                                type: "text",
+                                text: fields.description,
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
     });
     return response.data;
 }
