@@ -325,6 +325,22 @@ describe("API Routes", () => {
         expect(getResponse.body.fields).toHaveProperty("summary", "Test Create Ticket");
     });
 
+    // test de modification d'un ticket Jira
+    test("PUT /ticket/:id - update a Jira ticket", async () => {
+        const user = await User.create({ email: "testticket@example.com", password: "password123" });
+        const response = await request(app)
+            .post("/ticket")
+            .send({ title: "Test Updating Ticket", description: "Testing Ticket", email: user.email, password: "password123" });
+        expect(response.statusCode).toBe(201);
+
+        const ticketId = response.body.id;
+        const updateResponse = await request(app)
+            .put(`/ticket/${ticketId}`)
+            .send({ title: "Test Updated Ticket", description: "Testing Ticket Updated", email: user.email, password: "password123" });
+        expect(updateResponse.statusCode).toBe(200);
+        expect(updateResponse.body.fields).toHaveProperty("summary", "Test Updated Ticket");
+        expect(updateResponse.body.fields).toHaveProperty("description", "Testing Ticket Updated");
+
 
     // TEST SECURITAIRES //
 
