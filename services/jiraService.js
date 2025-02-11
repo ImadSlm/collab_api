@@ -5,7 +5,7 @@ async function createJiraTicket(summary, description) {
         const response = await jiraApi.post("/rest/api/3/issue", {
             fields: {
                 project: {
-                    key: "YOUR_PROJECT_KEY",
+                    key: "CLBAPI",
                 },
                 summary: summary,
                 description: description,
