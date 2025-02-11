@@ -14,6 +14,7 @@ Ce projet est une API qui permet aux utilisateurs de gérer des tâches et de co
 - Supertest
 - Postman
 - SonarQube
+- Jira
 
 ## Endpoints
 - `POST /auth` - Créer ou Authentifier un utilisateur
@@ -72,6 +73,13 @@ Le projet utilise Kubernetes pour le déploiement et la gestion des conteneurs. 
 - **Services** : Expose les applications et les bases de données pour permettre la communication entre elles.
 - **Secrets** : Stocke les informations sensibles telles que les mots de passe de la base de données.
 
+## Gestion des tickets
+
+Ce projet intègre également la gestion de tickets Jira, à l'aide de ces endpoints :
+
+- `POST /ticket` - Créer un ticket
+- `GET /ticket/:id` - Récupérer un ticket
+- `PUT /ticket/:id` - Modifier un ticket
 
 <!-- ## Installation
 Pour installer le projet, clonez le dépôt et installez les dépendances :
