@@ -148,13 +148,19 @@ app.delete("/task/:id", async (req, res) => {
 })
 
 app.post("/ticket", async (req, res) => {
-    const { title, description } = req.body;
-    // Seulement title est requis pour l'instant
-    if (!title) {
-        console.error("Title is required")
-        return res.status(400).json({ error: "Title is required" })
+    const { title, description, email, password } = req.body;
+    if (!title || !email || !password) {
+        return res.status(400).json({ error: "Title, email, and password are required" })
     }
     try {
+        const user = await User.findOne({ where: { email } })
+        if (!user) {
+            return res.status(404).json({ error: "User not found" })
+        }
+        const isPasswordValid = await verifyPassword(user, password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid password" })
+        }
         const jiraTicket = await jiraService.createJiraTicket(title, description);
         res.status(201).json(jiraTicket)
     } catch (error) {
@@ -307,9 +313,10 @@ describe("API Routes", () => {
 
     // test de création d'un ticket Jira
     test("POST /ticket - create a new Jira ticket", async () => {
+        const user = await User.create({ email: "testticket@example.com", password: "password123" });
         const response = await request(app)
             .post("/ticket")
-            .send({ title: "Test Create Ticket", description: "Testing Ticket Creation" });
+            .send({ title: "Test Create Ticket", description: "Testing Ticket Creation", email: user.email, password: "password123" });
         expect(response.statusCode).toBe(201);
         console.log(response.body);
     });
