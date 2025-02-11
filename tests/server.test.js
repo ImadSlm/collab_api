@@ -338,6 +338,7 @@ describe("API Routes", () => {
             .put(`/ticket/${ticketId}`)
             .send({ title: "Test Updated Ticket", description: "Testing Ticket Updated", email: user.email, password: "password123" });
         expect(updateResponse.statusCode).toBe(200);
+        console.log(updateResponse.body);
         expect(updateResponse.body.fields).toHaveProperty("summary", "Test Updated Ticket");
         expect(updateResponse.body.fields).toHaveProperty("description", "Testing Ticket Updated");
     });
