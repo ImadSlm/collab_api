@@ -7,6 +7,7 @@ const Task = require("./models/task")
 const validator = require("validator")
 const rateLimit = require("express-rate-limit");
 const bcrypt = require("bcrypt")
+const jiraService = require("./services/jiraService")
 
 const app = express()
 app.use(bodyParser.json())
@@ -162,6 +163,62 @@ app.delete("/task/:id", async (req, res) => {
         res.status(400).json({ error: error.message })
     }
 })
+
+// Création d'un ticket Jira
+app.post("/ticket", async (req, res) => {
+    const { title, description, email, password } = req.body;
+    if (!title || !email || !password) {
+        return res.status(400).json({ error: "Title, email, and password are required" })
+    }
+    try {
+        const user = await User.findOne({ where: { email } })
+        if (!user) {
+            return res.status(404).json({ error: "User not found" })
+        }
+        const isPasswordValid = await verifyPassword(user, password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid password" })
+        }
+        const jiraTicket = await jiraService.createJiraTicket(title, description);
+        res.status(201).json(jiraTicket)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+})
+
+// Mise à jour d'un ticket Jira
+app.put("/ticket/:id", async (req, res) => {
+    const { id } = req.params;
+    const { title, description, email, password } = req.body;
+    if (!title || !email || !password) {
+        return res.status(400).json({ error: "Title, email, and password are required" })
+    }
+    try {
+        const user = await User.findOne({ where: { email } })
+        if (!user) {
+            return res.status(404).json({ error: "User not found" })
+        }
+        const isPasswordValid = await verifyPassword(user, password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid password" })
+        }
+        const jiraTicket = await jiraService.updateJiraTicket(id, { summary: title, description: description })
+        res.status(200).json(jiraTicket)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+})
+
+// Récupération d'un ticket Jira
+app.get("/ticket/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const jiraTicket = await jiraService.getJiraTicket(id);
+        res.status(200).json(jiraTicket);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
 sequelize.sync().then(() => {
     app.listen(port, () => {
