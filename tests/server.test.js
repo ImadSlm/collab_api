@@ -150,20 +150,24 @@ app.delete("/task/:id", async (req, res) => {
 app.post("/ticket", async (req, res) => {
     const { title, description, email, password } = req.body;
     if (!title || !email || !password) {
+        console.error("Title, email, and password are required")
         return res.status(400).json({ error: "Title, email, and password are required" })
     }
     try {
         const user = await User.findOne({ where: { email } })
         if (!user) {
+            console.error("User not found")
             return res.status(404).json({ error: "User not found" })
         }
         const isPasswordValid = await verifyPassword(user, password);
         if (!isPasswordValid) {
+            console.error("Invalid password")
             return res.status(401).json({ error: "Invalid password" })
         }
         const jiraTicket = await jiraService.createJiraTicket(title, description);
         res.status(201).json(jiraTicket)
     } catch (error) {
+        console.error(error.message)
         res.status(400).json({ error: error.message })
     }
 })
