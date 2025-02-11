@@ -339,7 +339,6 @@ describe("API Routes", () => {
             .send({ title: "Test Updated Ticket", description: "Testing Ticket Updated", email: user.email, password: "password123" });
         expect(updateResponse.statusCode).toBe(200);
         const getResponse = await request(app).get(`/ticket/${ticketId}`);
-        console.log(getResponse.body);
         expect(getResponse.body.fields).toHaveProperty("summary", "Test Updated Ticket");
     });
 
