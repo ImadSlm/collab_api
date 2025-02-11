@@ -340,6 +340,7 @@ describe("API Routes", () => {
         expect(updateResponse.statusCode).toBe(200);
         expect(updateResponse.body.fields).toHaveProperty("summary", "Test Updated Ticket");
         expect(updateResponse.body.fields).toHaveProperty("description", "Testing Ticket Updated");
+    });
 
 
     // TEST SECURITAIRES //
