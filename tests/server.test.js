@@ -251,6 +251,10 @@ describe("API Routes", () => {
         loginLimiter.resetKey("::ffff:127.0.0.1");
     });
 
+    console.log("DB_APP_DATABASE", process.env.DB_APP_DATABASE);
+    console.log("DB_APP_USERNAME", process.env.DB_APP_USERNAME);
+    console.log("DB_APP_PASSWORD", process.env.DB_APP_PASSWORD);
+    console.log("DB_APP_HOST", process.env.DB_APP_HOST);
 
     // TESTS UNITAIRES //
 
