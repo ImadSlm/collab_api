@@ -1,5 +1,6 @@
 const { Sequelize } = require("sequelize")
 require("dotenv").config()
+//les var d'env peuvent fonctionner sans APP_
 const database = process.env.DB_APP_DATABASE
 const username = process.env.DB_APP_USERNAME
 const password = process.env.DB_APP_PASSWORD
